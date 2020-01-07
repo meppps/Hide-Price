@@ -55,6 +55,14 @@ function hideProdRef(){
 // Page specific elements
 var pageTitle = document.querySelector('h1.page-title');
 var breadcrumb = document.querySelector('.woocommerce-breadcrumb'); 
+var altTitle = document.querySelector('h1');
+
+// Search pages
+if(altTitle != null){
+    if(altTitle.textContent.includes('Search')){
+        var searchPage = true;
+    }
+};
 
 // Check if product is refurbished
 function checkProdRef(){
@@ -68,7 +76,7 @@ function checkProdRef(){
 // Check page type
 function checkPageType(){
     // Run on menus
-    if(pageTitle != null){
+    if(pageTitle != null || searchPage != null){
         hideSearchRef();
         console.log('%c Menu Page','color: #ff00ff')
     };
