@@ -1,88 +1,83 @@
 
-// Hide price on product pages // Works 
+// HIDE REFURB v2
 
-var breadcrumb = document.querySelector('.woocommerce-breadcrumb');
+// Hide in menus  
+function hideSearchRef(){
+    // Loop through nodelist, check for refurbished products
+    var pTitles = document.querySelectorAll('h2.woocommerce-loop-product__title');
+    pTitles.forEach((pTitle) => {
+        // If product is refurbished 
+        if(pTitle.textContent.includes('REFURBISHED')){
+            // Store Price
+            var pPrice = pTitle.nextElementSibling;
+            const actualPrice = pPrice.innerText;
+            console.log(`%c ${actualPrice}`,`color: yellow`);
 
-function hideRefurb(){
-// Hide price on page load
-document.querySelector('p.price').style.visibility = 'hidden';
-document.querySelector('button.single_add_to_cart_button').innerHTML = 'ADD TO CART TO SEE PRICE';
+            // Check button type / add visibility function
+            var atcButton = pPrice.parentElement.nextElementSibling;
+            // Only add display function to cart buttons
+            if(atcButton.textContent.includes('cart')){
 
-// Add to cart button functionality
-document.querySelector('.single_add_to_cart_button.button.alt').addEventListener('click', showPrice());
-
-// Display Price Function
-function showPrice(){
-    document.querySelector('p.price').style.visibility = 'hidden';
-    console.log('Added To Cart');
-}
+                atcButton.addEventListener('click',() =>{
+                pPrice.innerText = actualPrice;
+                });
+            }
+            // Hide price 
+            pPrice.innerText = 'Add to Cart to See Price';
+        }
+    })
 };
 
 
-// Check if products are refurbished
-function checkForRefurb(){
+// Hide on product page 
+function hideProdRef(){
+    // Store price
+    const productPrice = document.querySelector('p.price').innerText;
+    var message = document.querySelector('div.woocommerce-message');
+    var priceEl = document.querySelector('p.price');
+    var cartBtn = document.querySelector('.single_add_to_cart_button.button.alt');
 
+    // Prevent re-running
+    if(message == null){
+        // Hide price
+        priceEl.innerHTML = '<h2>Add to Cart to See Price</h2>';
+        
+        // Add to cart button functionality
+        cartBtn.addEventListener('click', () => {
+            // Show price
+            priceEl.innerText = productPrice;
+        });
+    }else if(message != null){
+        console.log('%c Already in Cart','color: pink');
+    }
+};
+
+// Page specific elements
+var pageTitle = document.querySelector('h1.page-title');
+var breadcrumb = document.querySelector('.woocommerce-breadcrumb'); 
+
+// Check if product is refurbished
+function checkProdRef(){
     // Hides refurb on product page
         if(breadcrumb.textContent.includes('Refurbished')){
-            hideRefurb();
-            console.log('This is a refurbished product')
-        }else{
-            console.log('This is not a refurbished product')
+            hideProdRef();
+            console.log('%c Refurbished Product','color: #00ffff')
         }
+};
 
+// Check page type
+function checkPageType(){
+    // Run on menus
+    if(pageTitle != null){
+        hideSearchRef();
+        console.log('%c Menu Page','color: #ff00ff')
     };
 
-
-// Only run on product pages
-if(breadcrumb != null){
-    console.log('This is a product page')
-    checkForRefurb();
-}else{
-    console.log('This is not a product page');
+    // Run on product pages
+    if(breadcrumb != null){
+        console.log('%c Product Page','color: #ff8000')
+        checkProdRef();
+    };
 };
 
-// MENU HIDE REFURB // Works
-
-var pageTitle = document.querySelector('h1.page-title');
-var price = document.querySelectorAll('span.price');
-
-
-function hideMenuPrices(){
-
-// var productTitle = document.querySelectorAll('.woocommerce-loop-product__title');
-
-
-if(pageTitle != null){
-    if(pageTitle.textContent.includes('Refurbished Equipment')){
-        console.log('Refurbished Detected')
-        hideMenuRefurb();
-        // document.querySelectorAll('span.price').innerHTML = 'Add to cart to see price';
-    }else{
-        console.log('No Refurb Detected')
-    }
-}
-};
-
-
-
-// Hides refurb on product menu
-function hideMenuRefurb(){
-if(pageTitle.innerText = 'Refurbished Equipment'){
-    price.forEach((price) => {
-        price.innerText = 'Add to Cart to See Price'
-    })
-}else{
-    console.log('No Refurb Detected')
-}
-
-};
-
-// Only run function on menus
-if(pageTitle != null){
-    hideMenuPrices();
-    console.log('This is a menu')
-}else{
-    console.log('this is not a menu')
-};
-
-
+checkPageType();
